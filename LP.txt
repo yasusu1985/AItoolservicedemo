@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美容室向け業務効率化AIツール - 撮る・送る・貼るで完了</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* フォント設定：游ゴシックとNoto Sans JP */
+        body {
+            font-family: 'Yu Gothic Medium', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+            background-color: #e6dcc8; /* コルクボード風のベース色 */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23bcaaa4' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #4a4036;
+        }
+
+        /* 紙のような質感のカード */
+        .paper-card {
+            background-color: #fdfbf7;
+            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        /* マスキングテープ風あしらい */
+        .tape {
+            background-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: absolute;
+            height: 30px;
+            width: 100px;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            z-index: 10;
+            border-left: 1px dashed rgba(0,0,0,0.1);
+            border-right: 1px dashed rgba(0,0,0,0.1);
+        }
+
+        .tape-corner {
+            background-color: rgba(220, 200, 180, 0.7);
+            position: absolute;
+            height: 40px;
+            width: 40px;
+            top: -15px;
+            left: -15px;
+            transform: rotate(-45deg);
+            z-index: 10;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="text-[#4a4036] scroll-smooth antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-[#fdfbf7]/90 backdrop-blur-md z-50 border-b border-[#d7ccc8] shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl font-bold tracking-wide text-[#5d4037]">Salon AI Assist</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#pain-points" class="text-sm font-medium text-[#795548] hover:text-[#3e2723] transition">お悩み</a>
+                    <a href="#features" class="text-sm font-medium text-[#795548] hover:text-[#3e2723] transition">機能</a>
+                    <a href="#plans" class="text-sm font-medium text-[#795548] hover:text-[#3e2723] transition">料金プラン</a>
+                    <a href="#faq" class="text-sm font-medium text-[#795548] hover:text-[#3e2723] transition">Q&A</a>
+                </div>
+                <div>
+                    <a href="#contact" class="bg-[#8d6e63] hover:bg-[#795548] text-white px-6 py-2 rounded-sm text-sm font-bold transition shadow-md">
+                        まずは相談
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Main Content Card -->
+            <div class="paper-card p-10 md:p-16 max-w-5xl mx-auto text-center transform rotate-[0.5deg]">
+                <!-- 上部のピン -->
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-[#a1887f]">
+                    <i data-lucide="pin" class="w-8 h-8 fill-current"></i>
+                </div>
+
+                <div class="inline-block border-b-2 border-[#8d6e63] mb-6 pb-1">
+                    <span class="text-[#8d6e63] text-sm font-bold tracking-widest">美容室の事務作業をAIで解決</span>
+                </div>
+                
+                <h1 class="text-3xl md:text-5xl font-bold text-[#3e2723] leading-tight mb-8">
+                    「撮る・送る・貼る」だけで<br>
+                    面倒な事務作業は終了。
+                </h1>
+                
+                <p class="text-lg text-[#5d4037] mb-10 max-w-2xl mx-auto leading-relaxed">
+                    美容師の時間は、お客様のために。<br>
+                    口コミ返信・SNS投稿・レポート分析をAIが完全サポート。
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#contact" class="bg-[#6d4c41] hover:bg-[#5d4037] text-white text-lg px-8 py-3 rounded-sm font-bold transition shadow-md flex items-center justify-center gap-2">
+                        <i data-lucide="rocket" class="w-5 h-5"></i>
+                        月額5,000円で自動化する
+                    </a>
+                    <a href="#features" class="bg-white hover:bg-[#efebe9] text-[#5d4037] border border-[#d7ccc8] text-lg px-8 py-3 rounded-sm font-bold transition flex items-center justify-center gap-2 shadow-sm">
+                        機能を見る
+                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <!-- Step 1 -->
+                <div class="paper-card p-6 text-center transform -rotate-1 hover:rotate-0 transition duration-300">
+                    <div class="tape"></div>
+                    <div class="w-16 h-16 bg-[#efebe9] rounded-full flex items-center justify-center mx-auto mb-4 text-[#8d6e63]">
+                        <i data-lucide="camera" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-[#3e2723]">1. 撮る</h3>
+                    <p class="text-sm text-[#5d4037]">口コミや施術写真を<br>スマホで撮影・スクショ</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="paper-card p-6 text-center transform rotate-1 hover:rotate-0 transition duration-300 z-10">
+                    <div class="tape"></div>
+                    <div class="w-16 h-16 bg-[#efebe9] rounded-full flex items-center justify-center mx-auto mb-4 text-[#8d6e63]">
+                        <i data-lucide="send" class="w-8 h-8 ml-1"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-[#3e2723]">2. 送る</h3>
+                    <p class="text-sm text-[#5d4037]">LINEでAIに送信。<br>数秒で解析・生成</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="paper-card p-6 text-center transform -rotate-1 hover:rotate-0 transition duration-300">
+                    <div class="tape"></div>
+                    <div class="w-16 h-16 bg-[#efebe9] rounded-full flex items-center justify-center mx-auto mb-4 text-[#8d6e63]">
+                        <i data-lucide="clipboard-check" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-[#3e2723]">3. 貼る</h3>
+                    <p class="text-sm text-[#5d4037]">生成された文章を<br>コピペして完了！</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Pain Points Section -->
+    <section id="pain-points" class="py-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-[#3e2723] mb-4 bg-white/50 inline-block px-4 py-1">
+                    こんな「事務作業」に、時間を奪われていませんか？
+                </h2>
+                <p class="text-[#5d4037] font-medium">技術と接客に集中したいのに、現実はパソコン作業ばかり...</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Item 1 -->
+                <div class="paper-card p-6 border-t-4 border-[#8d6e63]">
+                    <div class="text-[#a1887f] mb-4"><i data-lucide="frown" class="w-8 h-8"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-[#3e2723]">口コミ返信が辛い</h3>
+                    <p class="text-sm text-[#5d4037] leading-relaxed">営業後の疲れた体で、1件1件丁寧な返信文を考えるのが精神的に負担。</p>
+                </div>
+                <!-- Item 2 -->
+                <div class="paper-card p-6 border-t-4 border-[#8d6e63]">
+                    <div class="text-[#a1887f] mb-4"><i data-lucide="pen-tool" class="w-8 h-8"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-[#3e2723]">SNS更新が止まる</h3>
+                    <p class="text-sm text-[#5d4037] leading-relaxed">インスタやブログ、何を書いていいか分からず、更新が止まってしまっている。</p>
+                </div>
+                <!-- Item 3 -->
+                <div class="paper-card p-6 border-t-4 border-[#8d6e63]">
+                    <div class="text-[#a1887f] mb-4"><i data-lucide="users" class="w-8 h-8"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-[#3e2723]">質のバラつき</h3>
+                    <p class="text-sm text-[#5d4037] leading-relaxed">スタッフによって文章のトーンや質に差があり、お店のブランディングが難しい。</p>
+                </div>
+                <!-- Item 4 -->
+                <div class="paper-card p-6 border-t-4 border-[#8d6e63]">
+                    <div class="text-[#a1887f] mb-4"><i data-lucide="bar-chart-2" class="w-8 h-8"></i></div>
+                    <h3 class="font-bold text-lg mb-2 text-[#3e2723]">分析ができない</h3>
+                    <p class="text-sm text-[#5d4037] leading-relaxed">サロンレポートを見ても数字の羅列にしか見えず、具体的な改善策が分からない。</p>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <div class="inline-block paper-card px-8 py-4 transform rotate-1">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-[#d84315]">
+                        <i data-lucide="pin" class="w-6 h-6 fill-current"></i>
+                    </div>
+                    <p class="text-xl font-bold text-[#bf360c] flex items-center gap-2">
+                        <i data-lucide="check-circle" class="w-6 h-6"></i>
+                        その悩み、AIなら「数分」で解決できます。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="inline-block border-2 border-[#5d4037] px-4 py-1 mb-2 bg-[#e6dcc8]">
+                    <span class="text-[#5d4037] font-bold tracking-widest text-sm uppercase">Features</span>
+                </div>
+                <h2 class="text-3xl font-bold text-[#3e2723] mt-2 bg-white/60 inline-block px-4">現場を変える3つの機能</h2>
+            </div>
+
+            <!-- Feature 1 -->
+            <div class="paper-card p-8 md:p-12 mb-12 flex flex-col md:flex-row items-center gap-12">
+                <div class="tape"></div>
+                <div class="md:w-1/2 w-full">
+                    <div class="bg-[#f5f5f5] p-1 border border-gray-300 rounded shadow-inner">
+                        <div class="bg-white p-4">
+                            <div class="border-b border-gray-200 pb-2 mb-2 flex justify-between">
+                                <span class="font-bold text-sm text-gray-500">LINE</span>
+                            </div>
+                            <div class="space-y-3 text-sm">
+                                <div class="bg-[#dcf8c6] p-3 rounded-lg w-3/4 ml-auto shadow-sm text-[#4a4036]">
+                                    <p class="text-xs text-gray-500 mb-1">あなた</p>
+                                    [口コミのスクショ]
+                                </div>
+                                <div class="bg-white border border-gray-200 p-3 rounded-lg w-3/4 mr-auto shadow-sm text-[#4a4036]">
+                                    <p class="text-xs text-gray-500 mb-1">AIアシスタント</p>
+                                    <p>〇〇様、素敵な口コミありがとうございます！前髪のカット、気に入っていただけて嬉しいです...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-[#d7ccc8] text-[#5d4037] px-3 py-1 text-xs font-bold border border-[#a1887f]">返信・投稿アシスタント</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-[#3e2723]">スクショを送るだけ。<br>感情のこもった文章が即座に完成。</h3>
+                    <p class="text-[#5d4037] mb-6 leading-relaxed">
+                        口コミのスクリーンショットを送るだけで、AIが内容を読み取り、お客様一人ひとりに寄り添った返信文を作成します。
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 text-[#5d4037] font-bold">
+                            <i data-lucide="clock" class="text-[#8d6e63] w-5 h-5"></i>
+                            <span>作成時間：10分 → <strong class="text-[#bf360c] bg-yellow-100 px-1">1分</strong>に短縮</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="paper-card p-8 md:p-12 mb-12 flex flex-col md:flex-row-reverse items-center gap-12">
+                <div class="tape"></div>
+                <div class="md:w-1/2 w-full">
+                     <div class="bg-white border border-gray-300 p-6 shadow-sm relative">
+                         <div class="absolute -top-3 -right-3 w-12 h-12 bg-[#8d6e63] rounded-full flex items-center justify-center text-white font-bold text-xs shadow-md">PDF</div>
+                         <h4 class="font-bold border-b border-gray-300 pb-2 mb-3 text-[#3e2723]">改善提案シート</h4>
+                         <ul class="list-disc pl-5 space-y-2 text-sm text-[#5d4037]">
+                             <li><span class="bg-yellow-100 font-bold">リピート率改善:</span> 次回予約への誘導フロー見直し</li>
+                             <li><span class="bg-yellow-100 font-bold">新規集客:</span> 平日限定クーポンの打ち出し</li>
+                         </ul>
+                     </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="flex items-center gap-3 mb-4">
+                         <span class="bg-[#d7ccc8] text-[#5d4037] px-3 py-1 text-xs font-bold border border-[#a1887f]">サロンレポート解析</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-[#3e2723]">数字の羅列が、<br>「次の打ち手」に早変わり。</h3>
+                    <p class="text-[#5d4037] mb-6 leading-relaxed">
+                        毎月のサロンレポート（PDF）を入れるだけで、AIが重要数値を分析。現状の課題と具体的な改善アクションプランを提案します。
+                    </p>
+                     <ul class="space-y-3">
+                        <li class="flex items-center gap-3 text-[#5d4037] font-bold">
+                            <i data-lucide="file-text" class="text-[#8d6e63] w-5 h-5"></i>
+                            <span>改善提案シートを自動生成</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+             <div class="paper-card p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
+                <div class="tape"></div>
+                <div class="md:w-1/2 w-full">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#fff3e0] p-4 text-center border border-[#ffe0b2]">
+                            <p class="font-bold text-[#e65100]">Spring</p>
+                            <p class="text-xs text-[#ef6c00]">イエベ・春</p>
+                        </div>
+                        <div class="bg-white p-4 border border-gray-200">
+                             <p class="text-xs text-gray-500 mb-2">おすすめ</p>
+                             <div class="flex items-center gap-2">
+                                 <div class="w-6 h-6 bg-[#ffcc80] rounded-full"></div>
+                                 <span class="text-sm font-bold">コーラル</span>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-[#d7ccc8] text-[#5d4037] px-3 py-1 text-xs font-bold border border-[#a1887f]">パーソナルカラー診断</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 text-[#3e2723]">3分の診断で、<br>プロの提案と店販への導線を。</h3>
+                    <p class="text-[#5d4037] mb-6 leading-relaxed">
+                        お客様に6つの質問に答えてもらうだけで、パーソナルカラー診断が完了。最適な商品やメニューを自動提案します。
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-center gap-3 text-[#5d4037] font-bold">
+                            <i data-lucide="shopping-bag" class="text-[#8d6e63] w-5 h-5"></i>
+                            <span>店販・次回予約への自然な誘導</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Section -->
+    <section id="plans" class="py-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+             <div class="text-center mb-16">
+                <div class="inline-block border-2 border-[#5d4037] px-4 py-1 mb-2 bg-[#e6dcc8]">
+                    <span class="text-[#5d4037] font-bold tracking-widest text-sm uppercase">Plans</span>
+                </div>
+                <h2 class="text-3xl font-bold text-[#3e2723] mt-2 bg-white/60 inline-block px-4">選べる3つのプラン</h2>
+            </div>
+
+            <!-- プランカードグリッド -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                
+                <!-- Plan A -->
+                <div class="paper-card flex flex-col h-full border-2 border-[#8d6e63] relative z-10">
+                    <!-- マスキングテープ -->
+                    <div class="tape"></div>
+                    
+                    <div class="bg-[#8d6e63] text-white text-center py-2 text-sm font-bold">
+                        おすすめ！
+                    </div>
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="mb-4">
+                            <h3 class="text-xl font-bold text-[#3e2723] mb-1">サロン業務簡略化<br>AIツール</h3>
+                            <p class="text-xs text-[#795548]">現場の負担を劇的に減らす</p>
+                        </div>
+                        
+                        <!-- 価格エリア（高さを揃える） -->
+                        <div class="h-24 flex flex-col justify-end border-b border-dashed border-[#d7ccc8] pb-4 mb-4">
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-bold text-[#3e2723]">¥5,000</span>
+                                <span class="text-[#795548] ml-1 text-sm">/月 (+tax)</span>
+                            </div>
+                            <p class="text-xs text-[#8d6e63] mt-1">1ヶ月毎の更新</p>
+                        </div>
+
+                        <!-- リストエリア（余白を埋める） -->
+                        <div class="flex-grow">
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#8d6e63] w-4 h-4 flex-shrink-0"></i> 口コミ返信AI
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#8d6e63] w-4 h-4 flex-shrink-0"></i> 投稿生成AI
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#8d6e63] w-4 h-4 flex-shrink-0"></i> ブログ生成
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#8d6e63] w-4 h-4 flex-shrink-0"></i> パーソナルカラー診断
+                                </li>
+                                 <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#8d6e63] w-4 h-4 flex-shrink-0"></i> PDF解析
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- ボタン（下揃え） -->
+                        <div class="mt-auto">
+                            <a href="#contact" class="block w-full bg-[#8d6e63] hover:bg-[#6d4c41] text-white text-center py-3 rounded-sm font-bold transition shadow-sm">
+                                導入を相談する
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan B -->
+                <div class="paper-card flex flex-col h-full">
+                    <div class="tape"></div>
+                    <div class="p-6 flex flex-col h-full pt-12"> <!-- pt-12 to offset header space of Plan A -->
+                        <div class="mb-4">
+                            <h3 class="text-xl font-bold text-[#3e2723] mb-1">ホットペッパー<br>活用診断</h3>
+                            <p class="text-xs text-[#795548]">自走できる組織をつくる</p>
+                        </div>
+
+                        <!-- 価格エリア -->
+                        <div class="h-24 flex flex-col justify-end border-b border-dashed border-[#d7ccc8] pb-4 mb-4">
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-bold text-[#3e2723]">¥50,000</span>
+                                <span class="text-[#795548] ml-1 text-sm">/月 (+tax)</span>
+                            </div>
+                            <p class="text-xs text-[#8d6e63] mt-1">半年毎の更新</p>
+                        </div>
+
+                        <!-- リストエリア -->
+                        <div class="flex-grow">
+                            <ul class="space-y-3 mb-6">
+                                 <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#a1887f] w-4 h-4 flex-shrink-0"></i> 月1回オンライン診断
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#a1887f] w-4 h-4 flex-shrink-0"></i> チャット相談
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#a1887f] w-4 h-4 flex-shrink-0"></i> 伴走型アドバイス
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- ボタン -->
+                        <div class="mt-auto">
+                             <a href="#contact" class="block w-full bg-white border border-[#d7ccc8] hover:bg-[#efebe9] text-[#5d4037] text-center py-3 rounded-sm font-bold transition">
+                                詳細を聞く
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan C -->
+                <div class="paper-card flex flex-col h-full">
+                    <div class="tape"></div>
+                    <div class="p-6 flex flex-col h-full pt-12">
+                        <div class="mb-4">
+                            <h3 class="text-xl font-bold text-[#3e2723] mb-1">ホットペッパー<br>運用代行</h3>
+                            <p class="text-xs text-[#795548]">プロに任せて結果にコミット</p>
+                        </div>
+
+                        <!-- 価格エリア -->
+                        <div class="h-24 flex flex-col justify-end border-b border-dashed border-[#d7ccc8] pb-4 mb-4">
+                            <div class="flex items-baseline">
+                                <span class="text-3xl font-bold text-[#3e2723]">¥100,000</span>
+                                <span class="text-[#795548] ml-1 text-sm">/月 (+tax)</span>
+                            </div>
+                            <p class="text-xs text-[#8d6e63] mt-1">1年毎の更新</p>
+                        </div>
+
+                        <!-- リストエリア -->
+                        <div class="flex-grow">
+                            <ul class="space-y-3 mb-6">
+                                 <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#a1887f] w-4 h-4 flex-shrink-0"></i> 特集・クーポン最適化
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#a1887f] w-4 h-4 flex-shrink-0"></i> スタイル運用代行
+                                </li>
+                                <li class="flex items-center gap-2 text-sm text-[#5d4037]">
+                                    <i data-lucide="check" class="text-[#a1887f] w-4 h-4 flex-shrink-0"></i> レポート分析と改善
+                                </li>
+                                <li class="text-xs text-[#d84315] mt-2 border-t border-dotted border-[#d7ccc8] pt-2">※エリア制限あり</li>
+                            </ul>
+                        </div>
+
+                        <!-- ボタン -->
+                        <div class="mt-auto">
+                             <a href="#contact" class="block w-full bg-white border border-[#d7ccc8] hover:bg-[#efebe9] text-[#5d4037] text-center py-3 rounded-sm font-bold transition">
+                                エリア確認・相談
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision Section -->
+    <section class="py-20 bg-[#5d4037] text-[#efebe9] relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-3xl font-bold mb-6 border-b border-[#8d6e63] inline-block pb-2">AIが生む新しい価値</h2>
+            <p class="text-lg leading-loose mb-8 font-medium">
+                これは単なる効率化ツールではありません。<br>
+                サロン、ディーラー、そしてAIが三位一体となり、<br>
+                業界全体の価値を高めるパートナーシップを目指しています。<br>
+                <br>
+                美容師が「美容師にしかできないこと」に集中できる未来を、<br>
+                私たちと一緒に作りませんか。
+            </p>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-[#3e2723] bg-white/60 inline-block px-4">よくある質問</h2>
+            </div>
+            <div class="space-y-6">
+                <!-- FAQ 1 -->
+                <div class="paper-card p-6">
+                    <div class="tape-corner"></div>
+                    <h3 class="font-bold text-lg mb-2 flex items-center gap-3 text-[#3e2723]">
+                        <span class="text-[#bf360c] font-black">Q.</span> AIの知識がなくても使えますか？
+                    </h3>
+                    <p class="text-[#5d4037] pl-8">A. はい。「撮る・送る・貼る」だけの簡単操作ですので、スマホやLINEが使えればどなたでも簡単にご利用いただけます。</p>
+                </div>
+                <!-- FAQ 2 -->
+                <div class="paper-card p-6">
+                    <div class="tape-corner"></div>
+                    <h3 class="font-bold text-lg mb-2 flex items-center gap-3 text-[#3e2723]">
+                        <span class="text-[#bf360c] font-black">Q.</span> エリア制限はありますか？
+                    </h3>
+                    <p class="text-5d4037 pl-8">A. 「運用代行プラン（Plan C）」のみ、商圏保護のためエリア制限がございます。AIツールプランには制限はございません。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="paper-card p-10 md:p-16 border-2 border-[#8d6e63] border-dashed">
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 text-[#a1887f]">
+                    <i data-lucide="pin" class="w-8 h-8 fill-current"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-[#3e2723] mb-6">
+                    まずは、AIによる<br>「時間の余裕」を体感してください。
+                </h2>
+                <p class="text-[#5d4037] mb-10 font-bold">
+                    導入のご相談や、ツールのデモに関しては<br>お気軽にお問い合わせください。
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <!-- LINEボタン: hrefを書き換えてください -->
+                    <a href="https://line.me/R/ti/p/@YOUR_LINE_ID" target="_blank" rel="noopener noreferrer" class="bg-[#06c755] hover:bg-[#05b64d] text-white text-lg px-10 py-3 rounded-sm font-bold transition shadow-md flex items-center justify-center gap-2">
+                        <i class="w-6 h-6 fill-current"><!-- LINE icon placeholder -->
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.81 2 10.5c0 2.8 1.69 5.3 4.36 6.95.3.18.46.53.38.87l-.45 2.05c-.1.45.3.84.72.62l2.7-1.44c.26-.14.55-.2.84-.2 7.74 0 11.45-6.2 11.45-8.85C22 5.81 17.52 2 12 2z"/></svg>
+                        </i>
+                        LINEで相談する
+                    </a>
+                    <!-- メールボタン: hrefを書き換えてください -->
+                    <a href="mailto:info@example.com?subject=導入について相談" class="bg-white hover:bg-[#efebe9] text-[#5d4037] border border-[#a1887f] text-lg px-10 py-3 rounded-sm font-bold transition flex items-center justify-center gap-2">
+                        <i data-lucide="mail" class="w-5 h-5"></i>
+                        メールで問い合わせ
+                    </a>
+                </div>
+                <p class="text-xs text-[#a1887f] mt-4">※クリックするとLINE/メーラーが起動します</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#4e342e] text-[#d7ccc8] py-12 text-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left">
+                <span class="text-xl font-bold text-[#efebe9] block mb-2">Salon AI Assist</span>
+                <p>美容室経営をテクノロジーでアップデートする。</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="hover:text-white transition">運営会社</a>
+                <a href="#" class="hover:text-white transition">プライバシーポリシー</a>
+            </div>
+            <div class="text-[#a1887f]">
+                &copy; 2025 Salon AI Assist. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
